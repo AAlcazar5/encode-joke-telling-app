@@ -83,7 +83,7 @@ export default function Chat() {
   const handleCriticizeJoke = () => {
     append({
       role: "user",
-      content: `Critique the joke based on creativeness, humor, joke structure, writing, and comprehensiveness. Provide a score for each category out of 10, for a total of 50.`
+      content: `Critique the joke based on creativeness, humor, joke structure, writing, and comprehensiveness. Break down the joke piece by piece, examining whether has a good setup, entertainment value, narrative, punchline, and any twists. When translating into other languages, ensure to pay attention to the cultural context. Provide a score for each category out of 10, for a total of 50.`
     });
   };
 
@@ -94,7 +94,7 @@ export default function Chat() {
 
   return (
     <Layout>
-      <div className="flex items-center justify-center min-h-screen p-4 m-4">
+      <div className="flex items-center justify-center min-h-screen m-2">
         <div className="flex flex-col items-center justify-center space-y-8 text-white">
           <div className="space-y-2 text-center">
             <h2 className="text-3xl font-bold dark:text-zinc-200 text-zinc-800">

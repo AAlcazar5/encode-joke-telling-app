@@ -1,43 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useChat } from "ai/react";
+import Layout from "./layout";
+import { GenreSelector } from "./components/GenreSelector";
+import { ToneSelector } from "./components/ToneSelector";
+import { TypeSelector } from "./components/TypeSelector";
+import { LanguageSelector } from "./components/LanguageSelector";
+import { CreativenessSlider } from "./components/CreativenessSlider";
+import { ChatMessages } from "./components/ChatMessages";
+import { ControlButtons } from "./components/ControlButtons";
+import { topics, tones, types, languages } from "./data/options";
 
 export default function Chat() {
   const { messages, append, isLoading, setMessages } = useChat();
 
-  const topics = [
-    { emoji: "✈️", value: "airports" },
-    { emoji: "🙄", value: "pet peeves" },
-    { emoji: "👪", value: "family" },
-    { emoji: "🍔", value: "food" },
-    { emoji: "🤖", value: "technology" }
-  ];
-
-  const tones = [
-    { emoji: "😏", value: "sarcastic" },
-    { emoji: "🤪", value: "silly" },
-    { emoji: "🌵", value: "dry" },
-    { emoji: "🤔", value: "thoughtful" },
-    { emoji: "😈", value: "dark" },
-  ];
-
-  const types = [
-    { emoji: "🤡", value: "satire" },
-    { emoji: "🤣", value: "one-liner" },
-    { emoji: "📖", value: "anecdote" },
-    { emoji: "👀", value: "observational" },
-    { emoji: "🫵", value: "self-deprecating" },
-  ];
-
-  const languages = [
-    { label: "English", value: "english" },
-    { label: "Spanish", value: "spanish" },
-    { label: "Portuguese", value: "portuguese" },
-    { label: "French", value: "french" },
-    { label: "Italian", value: "italian" },
-  ];
-  
   const [state, setState] = useState({
     genre: "",
     tone: "",
@@ -47,7 +24,17 @@ export default function Chat() {
   });
 
   const [jokeGenerated, setJokeGenerated] = useState(false);
-  
+
+  // Ref for the chat messages container
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll to the bottom of the chat messages when new messages are added
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   const handleChange = ({
     target: { name, value },
   }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -106,8 +93,8 @@ export default function Chat() {
   );
 
   return (
-    <main className="mx-auto w-full p-24 flex flex-col">
-      <div className="p4 m-4">
+    <Layout>
+      <div className="flex items-center justify-center min-h-screen p-4 m-4">
         <div className="flex flex-col items-center justify-center space-y-8 text-white">
           <div className="space-y-2 text-center">
             <h2 className="text-3xl font-bold dark:text-zinc-200 text-zinc-800">
@@ -118,153 +105,26 @@ export default function Chat() {
             </p>
           </div>
 
-          {/* Genre selection */}
-          <div className="space-y-4 bg-opacity-25 bg-gray-700 rounded-lg p-4">
-            <h3 className="text-xl font-semibold">Genre</h3>
-            <div className="flex flex-wrap justify-center">
-              {topics.map(({ value, emoji }) => (
-                <div
-                  key={value}
-                  className="p-4 m-2 bg-opacity-25 bg-gray-600 rounded-lg"
-                >
-                  <input
-                    id={value}
-                    type="radio"
-                    value={value}
-                    name="genre"
-                    onChange={handleChange}
-                  />
-                  <label className="ml-2" htmlFor={value}>
-                    {`${emoji} ${value}`}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Tone selection */}
-          <div className="space-y-4 bg-opacity-25 bg-gray-700 rounded-lg p-4">
-            <h3 className="text-xl font-semibold">Tones</h3>
-            <div className="flex flex-wrap justify-center">
-              {tones.map(({ value, emoji }) => (
-                <div
-                  key={value}
-                  className="p-4 m-2 bg-opacity-25 bg-gray-600 rounded-lg"
-                >
-                  <input
-                    id={value}
-                    type="radio"
-                    name="tone"
-                    value={value}
-                    onChange={handleChange}
-                  />
-                  <label className="ml-2" htmlFor={value}>
-                    {`${emoji} ${value}`}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Type of joke selection */}
-          <div className="space-y-4 bg-opacity-25 bg-gray-700 rounded-lg p-4">
-            <h3 className="text-xl font-semibold">Type</h3>
-            <div className="flex flex-wrap justify-center">
-              {types.map(({ value, emoji }) => (
-                <div
-                  key={value}
-                  className="p-4 m-2 bg-opacity-25 bg-gray-600 rounded-lg"
-                >
-                  <input
-                    id={value}
-                    type="radio"
-                    name="type"
-                    value={value}
-                    onChange={handleChange}
-                  />
-                  <label className="ml-2" htmlFor={value}>
-                    {`${emoji} ${value}`}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Language and Creativeness */}
+          <GenreSelector options={topics} handleChange={handleChange} />
+          <ToneSelector options={tones} handleChange={handleChange} />
+          <TypeSelector options={types} handleChange={handleChange} />
           <div className="flex space-x-4">
-            {/* Language selection */}
-            <div className="flex-1 space-y-4 bg-opacity-25 bg-gray-700 rounded-lg p-4">
-              <h3 className="text-xl font-semibold text-center">Language</h3>
-              <select
-                name="language"
-                value={state.language}
-                onChange={handleChange}
-                className="w-full p-2 bg-gray-600 text-white rounded-lg text-center"
-              >
-                {languages.map(({ label, value }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Temperature slider */}
-            <div className="flex-1 space-y-4 bg-opacity-25 bg-gray-700 rounded-lg p-4">
-              <h3 className="text-xl font-semibold text-center">Creativeness</h3>
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                step="1" 
-                value={state.temperature} 
-                onChange={handleTemperatureChange} 
-                className="w-full"
-              />
-              <p className="text-center">{state.temperature}%</p>
-            </div>
+            <LanguageSelector languages={languages} state={state} handleChange={handleChange} />
+            <CreativenessSlider state={state} handleTemperatureChange={handleTemperatureChange} />
           </div>
-
-          {/* Buttons */}
-          <div className="flex space-x-4">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-              disabled={isLoading || !state.genre || !state.tone || !state.type}
-              onClick={handleGenerateJoke}
-            >
-              Generate Joke
-            </button>
-
-            <button
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-              disabled={isLoading}
-              onClick={handleGenerateRandomJoke}
-            >
-              Generate Random Joke
-            </button>
-
-            {jokeGenerated && (
-              <button
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                disabled={isLoading}
-                onClick={handleCriticizeJoke}
-              >
-                Criticize Joke
-              </button>
-            )}
-          </div>
-
-          {/* Chat messages */}
-          {filteredMessages.map((message, index) => (
-            <div
-              key={index}
-              className="bg-opacity-75 bg-gray-800 text-white rounded-lg p-4 mt-4"
-            >
-              {message.content}
-            </div>
-          ))}
+          <ControlButtons
+            isLoading={isLoading}
+            state={state}
+            jokeGenerated={jokeGenerated}
+            handleGenerateJoke={handleGenerateJoke}
+            handleGenerateRandomJoke={handleGenerateRandomJoke}
+            handleCriticizeJoke={handleCriticizeJoke}
+          />
+          <ChatMessages filteredMessages={filteredMessages} />
+          {/* Invisible div to ensure scrolling to the bottom */}
+          <div ref={messagesEndRef} />
         </div>
       </div>
-    </main>
+    </Layout>
   );
 }

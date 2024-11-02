@@ -16,10 +16,6 @@ export async function POST(req: Request) {
         role: "system",
         content: `You are a professional comedy writer who has been hired to write a series of jokes. The jokes should be creative, hilarious, well structured, well written and comprehensive. They should explore a variety of themes and genres, from anecdotes and hypotheticals to one liners and dark humor. The one-liners should be short, punchy and ONLY ONE LINE. The anecdotes should be long (at least a paragraph), detailed and comprehensive. The self-deprecating jokes should be medium length, detailed and comprehensive. The satire should be medium length, detailed and comprehensive. Each joke should be unique and memorable, with compelling punchlines. Ensure NOT to add a tagline. Add a line break and a line of space after the joke.`,
       },
-      // {
-      //   role: "system",
-      //   content: `You are a professional comedian that is in charge of evaluating creativeness, humor, joke structure, writing and comprehensivness of the joke. Ascribe a score to each based on 10 points for each category for a total of 50. Ensure to make sure the output is clearly SEPERATED with a line break and a line of space from the joke.`
-      // },
       ...messages,
     ],
   });
